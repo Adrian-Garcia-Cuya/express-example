@@ -1,15 +1,29 @@
 import express from "express";
 import { flightsOffer, mainFlights } from "../flights.js";
+import { FligthServices } from "../services/flight.service.js";
 
 const route = express.Router();
 
-route.get("/", (req, res) => {
-  res.json(mainFlights);
+const flightServices = new FligthServices();
+
+route.get("/", async (req, res, next) => {
+  try {
+    const result = await flightServices.getFlights();
+    res.json(result);
+  }
+  catch(e){
+    next({status:404,message:e});
+  }
 });
 
-route.get("/ofertas", (req, res) => {
-  console.log("entraste");
-  res.json(flightsOffer);
+route.get("/ofertas", async (req, res) => {
+  try {
+    const result = await flightServices.getOffers();
+    res.json(result);
+  }
+  catch(e){
+    next({status:404,message:e});
+  }
 });
 
 route.get("/:id", (req, res) => {
